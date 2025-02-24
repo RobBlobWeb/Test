@@ -1,34 +1,30 @@
 function sendMessage() {
   let input = document.getElementById("messageInput");
   let chat = document.getElementById("chatWindow");
-  let message = input.value.trim();
+  let message = input.value.trim().toLowerCase(); // Convert to lowercase for easier checking
   if (message) {
     chat.innerHTML += `<div class="message sent">${message}</div>`;
     input.value = "";
-    setTimeout(replyFromAlex, 1000); // Alex replies after a delay
-    chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+    setTimeout(() => replyFromAlex(message), 1000); // Pass the message to Alex
+    chat.scrollTop = chat.scrollHeight;
   }
 }
 
-function replyFromAlex() {
+function replyFromAlex(userMessage) {
   let chat = document.getElementById("chatWindow");
-  let message = "Hey, cool! Want to hear a secret? Say 'yes' or 'no'.";
-  chat.innerHTML += `<div class="message">${message}</div>`;
-  chat.scrollTop = chat.scrollHeight;
+  let reply;
 
-  // Check for game input
-  let lastSent = document.querySelector(".sent:last-child");
-  if (lastSent && lastSent.textContent.toLowerCase() === "yes") {
-    setTimeout(() => {
-      chat.innerHTML += `<div class="message">The secret is... there’s a hidden door nearby!</div>`;
-      chat.scrollTop = chat.scrollHeight;
-    }, 2000);
-  } else if (lastSent && lastSent.textContent.toLowerCase() === "no") {
-    setTimeout(() => {
-      chat.innerHTML += `<div class="message">Okay, your loss!</div>`;
-      chat.scrollTop = chat.scrollHeight;
-    }, 2000);
+  // Check user input for specific responses
+  if (userMessage === "yes") {
+    reply = "The secret is... there’s a hidden door nearby!";
+  } else if (userMessage === "no") {
+    reply = "Okay, your loss!";
+  } else {
+    reply = "Hey, cool! Want to hear a secret? Say 'yes' or 'no'.";
   }
+
+  chat.innerHTML += `<div class="message">${reply}</div>`;
+  chat.scrollTop = chat.scrollHeight;
 }
 
 // Start with a greeting
