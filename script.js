@@ -1,12 +1,12 @@
 function sendMessage() {
   let input = document.getElementById("messageInput");
   let chat = document.getElementById("chatWindow");
-  let message = input.value.trim().toLowerCase(); // Convert to lowercase for easier checking
+  let message = input.value.trim().toLowerCase(); // Get input, trim spaces, lowercase it
   if (message) {
-    chat.innerHTML += `<div class="message sent">${message}</div>`;
-    input.value = "";
-    setTimeout(() => replyFromAlex(message), 1000); // Pass the message to Alex
-    chat.scrollTop = chat.scrollHeight;
+    chat.innerHTML += `<div class="message sent">${message}</div>`; // Show your message
+    input.value = ""; // Clear input
+    chat.scrollTop = chat.scrollHeight; // Scroll to bottom
+    setTimeout(() => replyFromAlex(message), 1000); // Pass message to Alex after delay
   }
 }
 
@@ -14,7 +14,10 @@ function replyFromAlex(userMessage) {
   let chat = document.getElementById("chatWindow");
   let reply;
 
-  // Check user input for specific responses
+  // Log the input for debugging (visible in browser console)
+  console.log("User said: " + userMessage);
+
+  // Check the user's exact input
   if (userMessage === "yes") {
     reply = "The secret is... there’s a hidden door nearby!";
   } else if (userMessage === "no") {
