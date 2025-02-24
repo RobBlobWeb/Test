@@ -7,7 +7,7 @@ function sendMessage() {
     let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
     chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
     input.value = "";
-    chat.scrollTop = 0; // Snap to bottom (newest message)
+    snapToLatestMessage(chat); // Snap to latest
     setTimeout(() => replyFromAlex(messageForCheck), 1000);
   }
 }
@@ -35,11 +35,26 @@ function replyFromAlex(userMessage) {
   }
 
   chat.innerHTML += `<div class="message">${reply}</div>`;
-  chat.scrollTop = 0; // Snap to bottom after Alex replies
+  snapToLatestMessage(chat); // Snap to latest after Alex replies
+}
+
+function snapToLatestMessage(chat) {
+  let messages = chat.getElementsByClassName("message");
+  if (messages.length > 0) {
+    let latestMessage = messages[messages.length - 1]; // Last message
+    let inputBar = document.querySelector(".input-bar");
+    let inputBarHeight = inputBar.offsetHeight;
+    let chatBottom = chat.scrollHeight - chat.clientHeight;
+    let latestMessagePosition = latestMessage.offsetTop - chat.offsetTop;
+
+    // Scroll so the latest message sits just above the input bar
+    chat.scrollTop = latestMessagePosition - (chat.clientHeight - inputBarHeight);
+    if (chat.scrollTop < 0) chat.scrollTop = 0; // Prevent overscroll
+  }
 }
 
 window.onload = function() {
   let chat = document.getElementById("chatWindow");
   chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
-  chat.scrollTop = 0; // Start at bottom
+  snapToLatestMessage(chat); // Initial snap
 };
