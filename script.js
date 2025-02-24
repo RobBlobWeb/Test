@@ -7,7 +7,7 @@ function sendMessage() {
     let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
     chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
     input.value = "";
-    snapToInputBar(chat); // Snap latest message to input bar
+    snapToInputBar(chat);
     setTimeout(() => replyFromAlex(messageForCheck), 1000);
   }
 }
@@ -35,7 +35,7 @@ function replyFromAlex(userMessage) {
   }
 
   chat.innerHTML += `<div class="message">${reply}</div>`;
-  snapToInputBar(chat); // Snap after Alex replies
+  snapToInputBar(chat);
 }
 
 function snapToInputBar(chat) {
@@ -43,17 +43,23 @@ function snapToInputBar(chat) {
   if (messages.length > 0) {
     let latestMessage = messages[messages.length - 1]; // Newest message
     let inputBar = document.querySelector(".input-bar");
-    let inputBarTop = chat.scrollHeight - inputBar.offsetHeight; // Top of input bar relative to chat
-    let latestMessageTop = latestMessage.offsetTop - chat.offsetTop; // Top of latest message
+    
+    // Get positions and heights
+    let latestMessageRect = latestMessage.getBoundingClientRect();
+    let inputBarRect = inputBar.getBoundingClientRect();
+    let chatRect = chat.getBoundingClientRect();
 
-    // Scroll so latest message's top aligns with input bar's top
-    chat.scrollTop = latestMessageTop - (chat.scrollHeight - chat.clientHeight - inputBar.offsetHeight);
-    if (chat.scrollTop < 0) chat.scrollTop = 0; // Prevent overscroll
+    // Calculate scroll to align latest message's bottom with input bar's top
+    let scrollOffset = (latestMessageRect.bottom - chatRect.top) - (inputBarRect.top - chatRect.top);
+    chat.scrollTop += scrollOffset;
+
+    // Prevent overscroll
+    if (chat.scrollTop < 0) chat.scrollTop = 0;
   }
 }
 
 window.onload = function() {
   let chat = document.getElementById("chatWindow");
   chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
-  snapToInputBar(chat); // Initial snap
+  snapToInputBar(chat);
 };
