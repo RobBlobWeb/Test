@@ -5,7 +5,11 @@ function sendMessage() {
   let messageForCheck = message.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (message) {
     let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
-    chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
+    // Remove existing highlight
+    let previousLatest = chat.querySelector(".latest-message");
+    if (previousLatest) previousLatest.classList.remove("latest-message");
+    // Add new message with highlight
+    chat.innerHTML += `<div class="message sent latest-message"><pre>${encodedMessage}</pre></div>`;
     input.value = "";
     snapToInputBar(chat);
     setTimeout(() => replyFromAlex(messageForCheck), 1000);
@@ -34,7 +38,11 @@ function replyFromAlex(userMessage) {
     reply = "Hey, cool! Want to hear a secret? Say 'yes' or 'no'.";
   }
 
-  chat.innerHTML += `<div class="message">${reply}</div>`;
+  // Remove existing highlight
+  let previousLatest = chat.querySelector(".latest-message");
+  if (previousLatest) previousLatest.classList.remove("latest-message");
+  // Add reply with highlight
+  chat.innerHTML += `<div class="message latest-message">${reply}</div>`;
   snapToInputBar(chat);
 }
 
@@ -49,7 +57,7 @@ function snapToInputBar(chat) {
     let inputBarRect = inputBar.getBoundingClientRect();
     let chatRect = chat.getBoundingClientRect();
 
-    // Calculate scroll to align latest message's bottom with input bar's top
+    // Scroll so latest message's bottom snaps to input bar's top
     let scrollOffset = (latestMessageRect.bottom - chatRect.top) - (inputBarRect.top - chatRect.top);
     chat.scrollTop += scrollOffset;
 
@@ -60,6 +68,6 @@ function snapToInputBar(chat) {
 
 window.onload = function() {
   let chat = document.getElementById("chatWindow");
-  chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
+  chat.innerHTML = `<div class="message latest-message">Hi! Something strange is happening...</div>`;
   snapToInputBar(chat);
 };
