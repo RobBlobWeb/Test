@@ -1,12 +1,14 @@
 function sendMessage() {
   let input = document.getElementById("messageInput");
   let chat = document.getElementById("chatWindow");
-  let message = input.value.trim().toLowerCase(); // Get input, trim spaces, lowercase it
+  let message = input.value.trim();
+  let messageForCheck = message.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (message) {
-    chat.innerHTML += `<div class="message sent">${message}</div>`; // Show your message
-    input.value = ""; // Clear input
-    chat.scrollTop = chat.scrollHeight; // Scroll to bottom
-    setTimeout(() => replyFromAlex(message), 1000); // Pass message to Alex after delay
+    let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+    chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
+    input.value = "";
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => replyFromAlex(messageForCheck), 1000);
   }
 }
 
@@ -14,14 +16,21 @@ function replyFromAlex(userMessage) {
   let chat = document.getElementById("chatWindow");
   let reply;
 
-  // Log the input for debugging (visible in browser console)
-  console.log("User said: " + userMessage);
+  console.log("User said (cleaned): " + userMessage);
 
-  // Check the user's exact input
+  // Expanded interactions
   if (userMessage === "yes") {
-    reply = "The secret is... there’s a hidden door nearby!";
+    reply = "The secret is... there’s a hidden door nearby! Want to check it out? (say 'sure' or 'nah')";
   } else if (userMessage === "no") {
-    reply = "Okay, your loss!";
+    reply = "Okay, your loss! Anything else on your mind?";
+  } else if (userMessage === "sure") {
+    reply = "Sweet, let’s go! It’s behind the old oak tree. What do you see there?";
+  } else if (userMessage === "nah") {
+    reply = "Fair enough. I’m kinda curious though—what’s stopping you?";
+  } else if (userMessage === "hi" || userMessage === "hello") {
+    reply = "Hey there! Something weird’s going on around here... want to dig into it? (yes/no)";
+  } else if (userMessage === "what" || userMessage === "whatsup") {
+    reply = "I keep hearing noises at night—like whispers. Creepy, right? Thoughts?";
   } else {
     reply = "Hey, cool! Want to hear a secret? Say 'yes' or 'no'.";
   }
@@ -30,8 +39,7 @@ function replyFromAlex(userMessage) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Start with a greeting
-window.onload = () => {
+window.onload = function() {
   let chat = document.getElementById("chatWindow");
   chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
 };
