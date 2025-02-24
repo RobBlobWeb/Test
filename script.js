@@ -7,7 +7,7 @@ function sendMessage() {
     let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
     chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
     input.value = "";
-    chat.scrollTop = chat.scrollHeight;
+    chat.scrollTop = 0; // Snap to bottom (newest message)
     setTimeout(() => replyFromAlex(messageForCheck), 1000);
   }
 }
@@ -18,7 +18,6 @@ function replyFromAlex(userMessage) {
 
   console.log("User said (cleaned): " + userMessage);
 
-  // Expanded interactions
   if (userMessage === "yes") {
     reply = "The secret is... there’s a hidden door nearby! Want to check it out? (say 'sure' or 'nah')";
   } else if (userMessage === "no") {
@@ -36,10 +35,11 @@ function replyFromAlex(userMessage) {
   }
 
   chat.innerHTML += `<div class="message">${reply}</div>`;
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop = 0; // Snap to bottom after Alex replies
 }
 
 window.onload = function() {
   let chat = document.getElementById("chatWindow");
   chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
+  chat.scrollTop = 0; // Start at bottom
 };
