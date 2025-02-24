@@ -7,7 +7,7 @@ function sendMessage() {
     let encodedMessage = message.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
     chat.innerHTML += `<div class="message sent"><pre>${encodedMessage}</pre></div>`;
     input.value = "";
-    snapToLatestMessage(chat); // Snap to latest
+    snapToInputBar(chat); // Snap latest message to input bar
     setTimeout(() => replyFromAlex(messageForCheck), 1000);
   }
 }
@@ -35,20 +35,19 @@ function replyFromAlex(userMessage) {
   }
 
   chat.innerHTML += `<div class="message">${reply}</div>`;
-  snapToLatestMessage(chat); // Snap to latest after Alex replies
+  snapToInputBar(chat); // Snap after Alex replies
 }
 
-function snapToLatestMessage(chat) {
+function snapToInputBar(chat) {
   let messages = chat.getElementsByClassName("message");
   if (messages.length > 0) {
-    let latestMessage = messages[messages.length - 1]; // Last message
+    let latestMessage = messages[messages.length - 1]; // Newest message
     let inputBar = document.querySelector(".input-bar");
-    let inputBarHeight = inputBar.offsetHeight;
-    let chatBottom = chat.scrollHeight - chat.clientHeight;
-    let latestMessagePosition = latestMessage.offsetTop - chat.offsetTop;
+    let inputBarTop = chat.scrollHeight - inputBar.offsetHeight; // Top of input bar relative to chat
+    let latestMessageTop = latestMessage.offsetTop - chat.offsetTop; // Top of latest message
 
-    // Scroll so the latest message sits just above the input bar
-    chat.scrollTop = latestMessagePosition - (chat.clientHeight - inputBarHeight);
+    // Scroll so latest message's top aligns with input bar's top
+    chat.scrollTop = latestMessageTop - (chat.scrollHeight - chat.clientHeight - inputBar.offsetHeight);
     if (chat.scrollTop < 0) chat.scrollTop = 0; // Prevent overscroll
   }
 }
@@ -56,5 +55,5 @@ function snapToLatestMessage(chat) {
 window.onload = function() {
   let chat = document.getElementById("chatWindow");
   chat.innerHTML = `<div class="message">Hi! Something strange is happening...</div>`;
-  snapToLatestMessage(chat); // Initial snap
+  snapToInputBar(chat); // Initial snap
 };
